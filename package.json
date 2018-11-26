@@ -1,0 +1,16 @@
+{
+  "name": "bookfilmserver",
+  "version": "1.0.0",
+  "description": "server",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "irshad a",
+  "license": "ISC"
+}
