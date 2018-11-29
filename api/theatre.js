@@ -1,100 +1,51 @@
 
 var theatre = require('express').Router();
+var theatreModel = require('../db/model/theatreModel');
 
 theatre.get('/', (req, res) => {
 
-    res.status(200).json([
-        {
-        "name": "ESSENSIA",
-        "place": "Mayfair Drive, Fairacres",
-        "cord": [
-            5.822689,
-            -145.664416
-        ],
-        "rate": 37,
-        "shows": [
-            "10.10 AM",
-            "2.30 PM"
-        ],
-        "id": "5bf9e255785622ad593e9db9"
-        },
-        {
-        "name": "FROSNEX",
-        "place": "Bliss Terrace, Grill",
-        "cord": [
-            39.011762,
-            -53.126866
-        ],
-        "rate": 66,
-        "shows": [
-            "10.10 AM"
-        ],
-        "id": "5bf9e2559dfde3da176f5736"
-        },
-        {
-        "name": "CORECOM",
-        "place": "Nolans Lane, Remington",
-        "cord": [
-            -37.803658,
-            0.892477
-        ],
-        "rate": 50,
-        "shows": [
-            "10.10 AM",
-            "2.30 PM",
-            "4.30 PM",
-            "8.30 PM",
-            "8.30 PM",
-            "8.30 PM",
-            "8.30 PM",
-            "8.30 PM"
-        ],
-        "id": "5bf9e255f555dd3620d13cfc"
-        },
-        {
-        "name": "QUIZMO",
-        "place": "Hancock Street, Tooleville",
-        "cord": [
-            -35.600442,
-            99.155397
-        ],
-        "rate": 30,
-        "shows": [
-            "10.10 AM",
-            "2.30 PM",
-            "4.30 PM",
-            "8.30 PM"
-        ],
-        "id": "5bf9e255b5a427a11aed332b"
-        },
-        {
-        "name": "FRENEX",
-        "place": "Hunts Lane, Jackpot",
-        "cord": [
-            -9.230927,
-            -63.555282
-        ],
-        "rate": 44,
-        "shows": [
-            "10.10 AM",
-            "2.30 PM"
-        ],
-        "id": "5bf9e25570961017544622ab"
-        },
-        {
-        "name": "ISOLOGIX",
-        "place": "Court Street, Jacksonburg",
-        "cord": [
-            49.041763,
-            -51.104343
-        ],
-        "rate": 51,
-        "shows": [
-            "10.10 AM"
-        ],
-        "id": "5bf9e255954cbde4092cbc6e"
+    res.status(200).json();
+
+})
+.post('/', (req, res) => {
+
+    console.log('module::/api/theatre - method::post - operation:: start of the method');
+
+    var theatreObj = new theatreModel({
+        name    : 'test6',
+        screen    : 'test6',
+        place    : 'test6',
+    loc     : {
+                x : 1,
+                y : 1
+              },
+    });
+
+    theatreObj.save((err, obj, next) => {
+
+        if(err) {
+            
+            var error = [];
+            if(err.name === 'ValidationError') {
+                for(var e in err.errors)
+                {
+                    error.push({ object : err.errors[e].path, error : err.errors[e].message});
+                    console.log('module::/api/theatre - method::post - operation:: new theatre creation error - error:: ' + err.errors[e]);
+                }
+                
+            } else if( err.name === 'MongoError' && err.code === 11000) {
+                error.push({ object : '[' + theatreObj.name+ ', ' + theatreObj.screen+']', error : "Duplicate records"});
+            }
+            
+            res.status(400).json({ status: 'fail', errors : error});
+        } else {
+            console.log('module::/api/theatre - method::post - operation:: new theatre creation success ');
+            res.status(200).json({ status: 'success'});
         }
-    ]);
+    });
+
+
+    console.log('module::/api/theatre - method::post - operation:: end of the method');
 });
 
 module.exports = theatre;

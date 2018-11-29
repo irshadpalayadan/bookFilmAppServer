@@ -4,7 +4,8 @@
   "description": "server",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "mongoose": "^5.3.14"
   },
   "devDependencies": {},
   "scripts": {
