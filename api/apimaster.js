@@ -1,7 +1,7 @@
 var api = require('express').Router();
 
 var theatreApi = require('./theatre');
-api.use('/theatre', theatreApi);
+api.use('/theatres', theatreApi);
 
 
 

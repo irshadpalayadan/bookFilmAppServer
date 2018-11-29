@@ -1,6 +1,6 @@
 
 // this will start the server and return server refrence
-require('./config/startserver');
+require('./config/startServer');
 
 
 // this will start mongo db connection

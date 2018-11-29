@@ -2,66 +2,114 @@
 var theatre = require('express').Router();
 var theatreModel = require('../db/model/theatreModel');
 
-theatre.get('/all', (req, res) => {
+theatre.get('/:filterBy', (req, res) => {
+
     console.log('module::/api/theatre - method::get/all - operation:: start of the method');
+    var errorMessage = [];
+    // filter theatre based on the location only
+    if(req.params.filterBy === 'loc') {
+        
+        console.log('module::/api/theatre - method::get/all - message:: filter based on location');
+        if( req.query.lat === "" || isNaN(Number(req.query.lat))) {
+            errorMessage.push({object: 'lat', error: 'Invalid data'});
 
-    theatreModel.find().then((result) => {
+        } else if( req.query.long === "" || isNaN(Number(req.query.long))) {
+            errorMessage.push({object: 'long', error: 'Invalid data'});
 
-        var resultJson = [];
-        for(var i = 0; i< result.length; i++) {
-            resultJson.push({
-                id : result[i]._id,
-                name  : result[i].name,
-                screen  :result[i].screen,
-                place : result[i].place,
-                loc : { x : result[i].loc.x, y : result[i].loc.y},
-                rating : { clean : result[i].rating.clean, quality : result[i].rating.quality, seat: result[i].rating.seat },
+        } else {
+            // get the theatre withis 15 miles (20 km) radius
+            var locFilterQuery = { loc: { $geoWithin : { $centerSphere: [ [ Number(req.query.lat), Number(req.query.long) ], 15/3963.2 ] } } };
+            theatreModel.find( locFilterQuery ).then((result) => {
+                var resultJson = [];
+                for(var i = 0; i< result.length; i++) {
+                    resultJson.push({
+                        id : result[i]._id,
+                        name  : result[i].name,
+                        screen  :result[i].screen,
+                        place : result[i].place,
+                        loc : { x : result[i].loc.x, y : result[i].loc.y},
+                        rating : { clean : result[i].rating.clean, quality : result[i].rating.quality, seat: result[i].rating.seat },
+                    });
+                }
+        
+                console.log('module::/api/theatre - method::get/all - operation:: return data messgae:: total number of theatre : ' + result.length);
+                res.status(200).json({ theatrelist: resultJson});
+            })
+            .catch((error)=> {
+                console.log(error);
+            });    
+        }
+
+    }
+
+    // filter theatre based on the location and movieid
+    if(req.params.filterBy === 'movie') {
+        
+        console.log('module::/api/theatre - method::get/all - message:: filter based on location');
+        if( req.query.lat === "" || isNaN(Number(req.query.lat))) {
+            errorMessage.push({object: 'lat', error: 'Invalid data'});
+
+        } else if( req.query.long === "" || isNaN(Number(req.query.long))) {
+            errorMessage.push({object: 'long', error: 'Invalid data'});
+
+        } else if( req.query.cinema === "" ) {
+            errorMessage.push({object: 'cinema', error: 'Invalid cinema'});
+
+        } else {
+            // get the theatre withis 15 miles (20 km) radius
+            var locFilterQuery = { theatreloc: { $geoWithin : { $centerSphere: [ [ Number(req.query.lat), Number(req.query.long) ], 15/3963.2 ] } } };
+            //TODO: add theatre and movie schema
+            theatreAndMovieModel.find( locFilterQuery ).then(( threatres ) => {
+
+                var theatreID = [];
+                for(var i = 0; i< threatres.length; i++) {
+                    theatreID.push(threatres[i].theatreid);
+                }
+
+                theatreModel.find( { _id: {$in:theatreID}} ).then((result) => {
+
+                    var resultJson = [];
+                    for(var i = 0; i< result.length; i++) {
+                        resultJson.push({
+                            id : result[i]._id,
+                            name  : result[i].name,
+                            screen  :result[i].screen,
+                            place : result[i].place,
+                            loc : { x : result[i].loc.x, y : result[i].loc.y},
+                            rating : { clean : result[i].rating.clean, quality : result[i].rating.quality, seat: result[i].rating.seat },
+                        });
+                    }
+            
+                    console.log('module::/api/theatre - method::get/all - operation:: return data messgae:: total number of theatre : ' + result.length);
+                    res.status(200).json({ theatrelist: resultJson});
+                })
+                .catch((error) => {
+                    console.log('module::/api/theatre - method::get/all - operation:: return data - error:: ' + error);
+                });
+            })
+            .catch((error)=> {
+                console.log('module::/api/theatre - method::get/all - operation:: return data - error:: ' + error);
             });
         }
 
-        console.log('module::/api/theatre - method::get/all - operation:: return data messgae:: total number of theatre : ' + result.length);
-        res.status(200).json({ theatrelist: resultJson});
-    })
-    .catch((error)=> {
-        console.log(error);
-    });
+    }
 
+    if( errorMessage.length > 0 ) {
+        res.status(400).json({ status: 'fail', errors : errorMessage});
+
+    } 
     console.log('module::/api/theatre - method::get/all - operation:: end of the method');
-})
-.get('/location?', (req, res) => {
-    console.log('module::/api/theatre - method::get/all - operation:: start of the method');
 
-    theatreModel.find().then((result) => {
-
-        var resultJson = [];
-        for(var i = 0; i< result.length; i++) {
-            resultJson.push({
-                id : result[i]._id,
-                name  : result[i].name,
-                screen  :result[i].screen,
-                place : result[i].place,
-                loc : { x : result[i].loc.x, y : result[i].loc.y},
-                rating : { clean : result[i].rating.clean, quality : result[i].rating.quality, seat: result[i].rating.seat },
-            });
-        }
-
-        console.log('module::/api/theatre - method::get/all - operation:: return data messgae:: total number of theatre : ' + result.length);
-        res.status(200).json({ theatrelist: resultJson});
-    })
-    .catch((error)=> {
-        console.log(error);
-    });
-
-    console.log('module::/api/theatre - method::get/all - operation:: end of the method');
 })
 .post('/', (req, res) => {
 
     console.log('module::/api/theatre - method::post - operation:: start of the method');
 
+    // TODO : remove below with req parametres
     var theatreObj = new theatreModel({
-        name    : 'test6',
-        screen    : 'test6',
-        place    : 'test6',
+        name    : 'test',
+        screen    : 'test',
+        place    : 'test',
     loc     : {
                 x : 1,
                 y : 1
