@@ -2,10 +2,57 @@
 var theatre = require('express').Router();
 var theatreModel = require('../db/model/theatreModel');
 
-theatre.get('/', (req, res) => {
+theatre.get('/all', (req, res) => {
+    console.log('module::/api/theatre - method::get/all - operation:: start of the method');
 
-    res.status(200).json();
+    theatreModel.find().then((result) => {
 
+        var resultJson = [];
+        for(var i = 0; i< result.length; i++) {
+            resultJson.push({
+                id : result[i]._id,
+                name  : result[i].name,
+                screen  :result[i].screen,
+                place : result[i].place,
+                loc : { x : result[i].loc.x, y : result[i].loc.y},
+                rating : { clean : result[i].rating.clean, quality : result[i].rating.quality, seat: result[i].rating.seat },
+            });
+        }
+
+        console.log('module::/api/theatre - method::get/all - operation:: return data messgae:: total number of theatre : ' + result.length);
+        res.status(200).json({ theatrelist: resultJson});
+    })
+    .catch((error)=> {
+        console.log(error);
+    });
+
+    console.log('module::/api/theatre - method::get/all - operation:: end of the method');
+})
+.get('/location?', (req, res) => {
+    console.log('module::/api/theatre - method::get/all - operation:: start of the method');
+
+    theatreModel.find().then((result) => {
+
+        var resultJson = [];
+        for(var i = 0; i< result.length; i++) {
+            resultJson.push({
+                id : result[i]._id,
+                name  : result[i].name,
+                screen  :result[i].screen,
+                place : result[i].place,
+                loc : { x : result[i].loc.x, y : result[i].loc.y},
+                rating : { clean : result[i].rating.clean, quality : result[i].rating.quality, seat: result[i].rating.seat },
+            });
+        }
+
+        console.log('module::/api/theatre - method::get/all - operation:: return data messgae:: total number of theatre : ' + result.length);
+        res.status(200).json({ theatrelist: resultJson});
+    })
+    .catch((error)=> {
+        console.log(error);
+    });
+
+    console.log('module::/api/theatre - method::get/all - operation:: end of the method');
 })
 .post('/', (req, res) => {
 
