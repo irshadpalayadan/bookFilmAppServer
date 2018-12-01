@@ -1,8 +1,7 @@
-
-var theatre = require('express').Router();
+var theatreRouter = require('express').Router();
 var theatreModel = require('../db/model/theatreModel');
 
-theatre.get('/:filterBy', (req, res) => {
+theatreRouter.get('/:filterBy', (req, res) => {
 
     console.log('module::/api/theatre - method::get/all - operation:: start of the method');
     var errorMessage = [];
@@ -57,16 +56,12 @@ theatre.get('/:filterBy', (req, res) => {
 
         } else {
             // get the theatre withis 15 miles (20 km) radius
-            var locFilterQuery = { theatreloc: { $geoWithin : { $centerSphere: [ [ Number(req.query.lat), Number(req.query.long) ], 15/3963.2 ] } } };
-            //TODO: add theatre and movie schema
-            theatreAndMovieModel.find( locFilterQuery ).then(( threatres ) => {
+            var locFilter = { theatreloc: { $geoWithin : { $centerSphere: [ [ Number(req.query.lat), Number(req.query.long) ], 15/3963.2 ] } } };
+            var select = { theatreid : 1 };
+            //TODO: add theatre and movie schema... need to test
+            theatreAndMovieModel.find( locFilter, select).then(( theatreIDArray ) => {
 
-                var theatreID = [];
-                for(var i = 0; i< threatres.length; i++) {
-                    theatreID.push(threatres[i].theatreid);
-                }
-
-                theatreModel.find( { _id: {$in:theatreID}} ).then((result) => {
+                theatreModel.find( { _id: { $in: theatreIDArray } } ).then((result) => {
 
                     var resultJson = [];
                     for(var i = 0; i< result.length; i++) {
@@ -143,4 +138,4 @@ theatre.get('/:filterBy', (req, res) => {
     console.log('module::/api/theatre - method::post - operation:: end of the method');
 });
 
-module.exports = theatre;
+module.exports = theatreRouter;

@@ -7,3 +7,6 @@ require('./config/startServer');
 require('./config/startMongo');
 
 
+// authenticate oauth 2.0 using passport
+require('./config/startAuth');
+

@@ -1,7 +1,12 @@
-var api = require('express').Router();
+const api = require('express').Router();
 
-var theatreApi = require('./theatre');
+//Rout to the theatre
+const theatreApi = require('./theatre');
 api.use('/theatres', theatreApi);
+
+//Rout to authentication
+const authApi = require('./auth');
+api.use('/auth', authApi);
 
 
 
