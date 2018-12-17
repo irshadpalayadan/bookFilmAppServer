@@ -3,7 +3,6 @@ var schema = mongoose.Schema;
 var whoColumn = require('./whoColumns');
 
 var userDetails = new schema({
-    id          : mongoose.Schema.Types.ObjectId,
     userLoginId : mongoose.Schema.Types.ObjectId,
     name        : { type : String, required : true },
     email       : { type : String },
@@ -13,6 +12,6 @@ var userDetails = new schema({
     whoColumn
 });
 
-var userDetailsModel = mongoose.model('test', userDetails);
+var userDetailsModel = mongoose.model('userDetails', userDetails);
 
 module.exports = userDetailsModel;

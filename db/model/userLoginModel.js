@@ -3,7 +3,6 @@ var schema = mongoose.Schema;
 var whoColumn = require('./whoColumns');
 
 var userLogin = new schema({
-    id          : mongoose.Schema.Types.ObjectId,
     username    : { type : String, required : true },
     email       : { type : String },
     phno        : { type : String},
@@ -16,6 +15,6 @@ var userLogin = new schema({
     TODO: add index for uername, phno, email if needed
 */
 
-var userLoginModel = mongoose.model('test', userLogin);
+var userLoginModel = mongoose.model('userLogin', userLogin);
 
 module.exports = userLoginModel;

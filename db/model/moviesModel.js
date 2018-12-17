@@ -3,13 +3,11 @@ var schema = mongoose.Schema;
 var whoColumn = require('./whoColumns');
 
 var person = new schema({
-    id      : mongoose.Schema.Types.ObjectId,
     name    : { type : String, required : true },
     role    : { type : String, required : true },
   });
 
 var movie = new schema({
-    id      : mongoose.Schema.Types.ObjectId,
     name    : { type : String, required : true },
     desc    : { type : String, required : true },
     //TODO : the actors and crews must have a relationship to filmPerson table
