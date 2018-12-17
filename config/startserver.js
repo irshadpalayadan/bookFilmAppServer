@@ -1,5 +1,5 @@
 var app = require('express')();
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 5000;
 
 
 //=====================  create router and server listner one time ==========================
@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log('server start listening to port :  $(PORT)');
+    console.log('server start listening to port : ' + PORT);
 });
 
 //===========================================================================================
