@@ -13,15 +13,25 @@ authRouter.get('/google', passport.authenticate('google', { scope: ["profile"] }
     const username = req.query.user;
     const password = req.query.pass;
     // TODO :  need to add express validation
-    userLogin.findOne({username: username, pass: password}).then((result) => {
-        if( result != null) {
-            res.status(200).json({ signin: 'success'});
+
+    userLogin.findOne( { $or : [{username: username}, {phno: username}, {email: username}] } )
+    .then( (user) => {
+        if( user != null) {
+
+            user.checkPassword( password )
+            .then( ( isValid) => {
+                if(isValid === true) {
+                    res.status(200).json({ signin: 'success'});
+                } else {
+                    res.status(400).json({ signin: 'fail'});
+                }
+            });
+            
         } else {
             res.status(400).json({ signin: 'fail'});
         }
         
     });
-    console.log( 'module::/api/auth - method::get/login - username : ' + username + ' password : ' + password);
 })
 .post('/signup', (req, res) => {
     const username = req.query.user;
@@ -36,6 +46,8 @@ authRouter.get('/google', passport.authenticate('google', { scope: ["profile"] }
         pass: password,
         priv: 'basic'
     });
+
+
 
     user_login.save((err, obj) => {
 
