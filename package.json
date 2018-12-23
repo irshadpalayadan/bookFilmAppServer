@@ -7,9 +7,11 @@
     "bcrypt": "^3.0.2",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
     "mongoose": "^5.3.14",
     "passport": "^0.4.0",
-    "passport-google-oauth20": "^1.0.0"
+    "passport-google-oauth20": "^1.0.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {},
   "scripts": {
