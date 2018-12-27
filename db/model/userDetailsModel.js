@@ -7,7 +7,6 @@ var userDetails = new schema({
     name        : { type : String, required : true },
     email       : { type : String },
     phno        : { type : String},
-    img         : { type : Buffer },
     address     : { type : String},
     whoColumn
 });

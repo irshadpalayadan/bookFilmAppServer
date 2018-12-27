@@ -4,10 +4,24 @@ var whoColumn = require('./whoColumns');
 var bcrypt = require('bcrypt');
 var SALT_ROUND = 10;
 var userLogin = new schema({
-    username    : { type : String, required : true },
+    local   :   {
+                    username    : { type : String },
+                    phno        : { type : String},
+                    pass        : { type : String},
+                    imgBuffer   : { type : Buffer },
+                },
+
+    google  :   {
+                    id          : { type : String},
+                    displayName : { type : String },
+                    name        : {
+                                        firstName : { type : String },
+                                        middleName : { type : String },
+                                        lastName : { type : String }
+                                  },
+                    imgUrl      : { type : String }
+                },
     email       : { type : String },
-    phno        : { type : String},
-    pass        : { type : String, required : true },
     priv        : [String],
     whoColumn
 });
@@ -18,36 +32,30 @@ var userLogin = new schema({
 
 userLogin.pre('save', function( next ) {
 
-    if( this.isModified('pass') ) {
+    if( this.isModified('local.pass') ) {
         bcrypt.genSalt(SALT_ROUND, (err, salt) => {
             if(err) {
                 return next(err);
             } else {
-                bcrypt.hash( this.pass, salt, (err, hash) => {
+                bcrypt.hash( this.local.pass, salt, (err, hash) => {
                     if(err) {
                         return next(err);
                     } else {
-                        this.pass = hash;
+                        this.local.pass = hash;
                         next();
                     }
                 });
             }
         });
+    } else {
+        next();
     }
 });
 
 
 userLogin.methods.checkPassword = function(password) {
      
-    return bcrypt.compare(password, this.pass);
-}
-
-
-userLogin.method.validateUser = (username, password) => {
-    
-    var user = this.find({username : username}, (err, user) => {
-        console.log(user);
-    })
+    return bcrypt.compare(password, this.local.pass);
 }
 
 

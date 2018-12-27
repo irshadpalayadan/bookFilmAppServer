@@ -10,7 +10,7 @@ module.exports = function( passport ) {
     },
     function(req, user, pass, done) {
         
-        userLogin.findOne( { $or : [{username: user}, {phno: user}, {email: user}] } )
+        userLogin.findOne( { $or : [{'local.username' : user}, {'local.phno' : user}, {email : user}] } )
         .then( (user) => {
             if( user != null) {
 
@@ -42,23 +42,24 @@ module.exports = function( passport ) {
         const phno = req.query.phno;
 
         // TODO :  need to add express validation
-        userLogin.findOne( { $or : [{username: user}, {phno: user}, {email: user}] } )
+        userLogin.findOne( { $or : [{'local.username' : user}, {'local.phno' : phno}] } )
         .then( ( existingUser ) => {
             if( existingUser != null) {
                 return done(null, false, { signup: 'fail'});
             } else {
                 var user_login = new userLogin({
-                    username: user,
+                    local : {   username: user,
+                                phno: phno,
+                                pass: pass,
+                            },
                     email: email,
-                    phno: phno,
-                    pass: pass,
                     priv: 'basic'
                 });
 
                 user_login.save((err, obj) => {
 
                     if(err != null ) {
-                        return done(null, false, {signup: fail});
+                        return done(null, false, {signup: 'fail'});
                     } else {
                         var user_details = new userDetails({
                             userLoginId: obj.id,
@@ -69,9 +70,9 @@ module.exports = function( passport ) {
                         user_details.save((err, obj) => {
     
                             if(err != null ) {
-                                return done(null, false, {signup: fail});
+                                return done(null, false, {signup: 'fail' });
                             } else {
-                                return done(null, obj);
+                                return done(null, user_login);
                             }
                         });
                     }

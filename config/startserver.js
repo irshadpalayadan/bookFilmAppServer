@@ -1,5 +1,5 @@
 var PORT = process.env.PORT || 5000;
-var cors = require('cors')();
+var cors = require('cors');
 var api = require('../api/apimaster');
 
 
@@ -8,14 +8,28 @@ module.exports = function( app ){
     /*
         TODO : add cors options if needed
     */
-    app.use(cors);
+/*
+   let whitelist = ['http://localhost:3000'];
+
+   let corsOptions = {
+     origin: function (origin, callback) {
+       if (whitelist.indexOf(origin) !== -1) {
+         callback(null, true);
+       } else {
+         callback(new Error('Not allowed by CORS'));
+       }
+     }
+   };*/
+
+   app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+     
 
     
     //=====================  create router and server listner one time ==========================
 
     app.use('/api', api);
 
-    app.get('/', (req, res) => {
+    app.get( '/', (req, res) => {
         res.status(200).json({ message : 'server root connection success'})
     });
 

@@ -1,34 +1,14 @@
 const expressSession = require('express-session');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const passport = require('passport');
 const userLogin = require('../db/model/userLoginModel');
 const key = require('./key');
 
-/*TODO :  get the setting from key
-passport.use( new googleStrat({ 
-    callbackURL: '/api/auth/google/redirect',
-    clientID : key.googleAuth.clientID,
-    clientSecret : key.googleAuth.secret,
-}, ( acessToken, refreshToken, profile, done ) => {
-    
-    console.log('passport call back function fired');
-    console.log('profile :' + profile);
-})
-);
-
-*/
 
 module.exports = function( app ) {
 
-    passport.serializeUser( function( user, done ) {
-        done(null, user.id);
-    });
-
-    passport.deserializeUser( function( id, done ) {
-
-        userLogin.findById(id, function(err, user) {
-            done(err, user);
-        });
-    });
+    
 
     /*
     TODO :  handle the express session with proper option ..
@@ -40,8 +20,24 @@ module.exports = function( app ) {
   touchAfter: 24 * 3600}), secret: 'qwertyuiop123456789', resave: false,
   saveUninitialized: false, cookie: {maxAge: 1000 * 60 * 15}}));
     */
-    app.use( expressSession({ secret: key.expressSession.secret , resave: false, saveUninitialized: true}) );
+    app.use(cookieParser());
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use( expressSession({ secret: key.expressSession.secret , resave: true, saveUninitialized: true}) );
     require('../service/passport/passportLocal')(passport);
+    require('../service/passport/passportGoogle')(passport);
     app.use( passport.initialize() );
     app.use( passport.session() );
+
+
+    passport.serializeUser( function( user, done ) {
+        done(null, user.id);
+    });
+
+    passport.deserializeUser( function( id, done ) {
+
+        userLogin.findById(id, function(err, user) {
+            done(null, user);
+        });
+    });
 }
