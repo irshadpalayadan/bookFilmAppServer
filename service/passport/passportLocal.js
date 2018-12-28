@@ -1,6 +1,7 @@
 const localStartegy = require('passport-local').Strategy;
 const userLogin = require('../../db/model/userLoginModel');
 const userDetails = require('../../db/model/userDetailsModel');
+const gmailClient = require('../email/gmailClient');
 
 module.exports = function( passport ) {
     passport.use('local-signin', new localStartegy({
@@ -72,6 +73,7 @@ module.exports = function( passport ) {
                             if(err != null ) {
                                 return done(null, false, {signup: 'fail' });
                             } else {
+                                (new gmailClient()).sendDefaultWelcomeMail(email);
                                 return done(null, user_login);
                             }
                         });

@@ -9,6 +9,10 @@ const configData = {
                     secret: "Al-gOPvHU5ISTZaw9d88LngU",
                     redirectUrl : "http://localhost:5000/api/auth/google/callback"
                  },
+    gmailClient : {
+                mailId : 'irshadichu00@gmail.com',
+                password : 'ipalayadan',
+    },
 }
 
 module.exports = configData;

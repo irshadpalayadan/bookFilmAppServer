@@ -1,9 +1,7 @@
 const authRouter = require('express').Router();
 const passport = require('passport');
-
-const userLogin = require('../db/model/userLoginModel');
-const userDetails = require('../db/model/userDetailsModel');
 const authCheck = require('../service/passport/authCheck');
+
 
 authRouter.get('/signin', passport.authenticate('local-signin', {failWithError : true}), 
     (req, res) => {

@@ -2,6 +2,7 @@ const googleStartegy = require('passport-google-oauth2').Strategy;
 const key = require('../../config/key');
 const userLogin = require('../../db/model/userLoginModel');
 const userDetails = require('../../db/model/userDetailsModel');
+const gmailClient = require('../email/gmailClient');
 
 
 module.exports = function( passport ) {
@@ -48,6 +49,7 @@ module.exports = function( passport ) {
                             if(err != null ) {
                                 return done(null, false, {signup: 'fail' });
                             } else {
+                                (new gmailClient()).sendDefaultWelcomeMail(email);
                                 return done(null, user_login);
                             }
                         });
