@@ -30,8 +30,6 @@ const nodeMailer = require('nodemailer');
 
             if(err) {
                 console.log('Email send failed to : ' + ' error : ' + err);
-            } else {
-                console.log('email send successfully ' + info.response);
             }
         });
 
