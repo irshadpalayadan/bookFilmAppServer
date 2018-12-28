@@ -1,7 +1,7 @@
 var PORT = process.env.PORT || 5000;
 var cors = require('cors');
 var api = require('../api/apimaster');
-
+var mobileApi = require('../mobile/api/apimaster');
 
 module.exports = function( app ){
 
@@ -28,6 +28,7 @@ module.exports = function( app ){
     //=====================  create router and server listner one time ==========================
 
     app.use('/api', api);
+    app.use('/m/api', mobileApi);
 
     app.get( '/', (req, res) => {
         res.status(200).json({ message : 'server root connection success'})
