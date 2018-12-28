@@ -6,5 +6,3 @@ npm-debug.*
 *.mobileprovision
 .vscode/*
 config/key.js
-
-sss
