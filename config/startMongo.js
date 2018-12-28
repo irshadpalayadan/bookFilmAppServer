@@ -1,7 +1,7 @@
 //=============   below code will help to run local server  without key file   ==============
 var keyData;
 try {
-    keyData = require('./keys');
+    keyData = require('./key');
 } catch(e) {
     keyData = {mongoDB : { url : ''}};
 }
