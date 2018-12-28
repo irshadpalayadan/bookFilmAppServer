@@ -5,3 +5,4 @@ npm-debug.*
 *.key
 *.mobileprovision
 .vscode/*
+config/key.js
