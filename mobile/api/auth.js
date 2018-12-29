@@ -24,19 +24,14 @@ authRouter.get('/signin', passport.authenticate('local-signin', {failWithError :
         res.status(401).json({ signup: 'fail'});
     }
 )
-.get('/signinstatus', authCheck, (req, res) => {
+.get('/signinstatus',  (req, res) => {
+    res.status(200).json({ status: 'success', redirectUrl: 'http://localhost:3000/dashboard'});
+})
+.get('/signout', (req, res) => {
     req.session.destroy(() => {
         res.clearCookie('connect.sid');
         res.status(200).json({ status: 'success', redirectUrl: 'http://localhost:3000'});
     });
-    res.status(200).json({ status: 'success', redirectUrl: 'http://localhost:3000/dashboard'});
-})
-.get('/aaa', authCheck, (req, res) => {
-    res.status(200).json({ status: 'success', redirectUrl: 'http://localhost:3000/dashboard'});
-})
-.get('/signout', (req, res) => {
-    
-    res.status(200).json({ status: 'success', redirectUrl: 'http://localhost:3000'});
 });
 
 
