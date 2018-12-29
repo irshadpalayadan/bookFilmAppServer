@@ -8,7 +8,7 @@ module.exports = function( app ){
     /*
         TODO : add cors options if needed
     */
-/*
+    /*
    let whitelist = ['http://localhost:3000'];
 
    let corsOptions = {
