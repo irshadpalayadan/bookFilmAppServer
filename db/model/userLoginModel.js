@@ -6,20 +6,11 @@ var SALT_ROUND = 10;
 var userLogin = new schema({
     local   :   {
                     username    : { type : String },
-                    phno        : { type : String},
                     pass        : { type : String},
-                    imgBuffer   : { type : Buffer },
                 },
 
     google  :   {
                     id          : { type : String},
-                    displayName : { type : String },
-                    name        : {
-                                        firstName : { type : String },
-                                        middleName : { type : String },
-                                        lastName : { type : String }
-                                  },
-                    imgUrl      : { type : String }
                 },
     email       : { type : String },
     priv        : [String],

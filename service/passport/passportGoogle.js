@@ -21,14 +21,13 @@ module.exports = function( passport ) {
         .then( ( existingUser ) => {
 
             if( existingUser == null ) {
+
+                // here there is no user exist with the email,
+                // so create a new one
+
                 var user_login = new userLogin({
-                    google : {  id  : profile.id,
-                                displayName : profile.displayName,
-                                name : { firstName  : profile.name.givenName,
-                                         middleName : profile.name.middleName,
-                                         lastName   : profile.name.familyName,
-                                        },
-                                imgUrl : imgUrl,
+                    google : {  
+                                id  : profile.id
                              },
                     email: email,
                     priv: 'basic'
@@ -41,7 +40,11 @@ module.exports = function( passport ) {
                     } else {
                         var user_details = new userDetails({
                             userLoginId: obj.id,
-                            name: email,
+                            name: profile.displayName,
+                            google : {  
+                                        displayName : profile.displayName,
+                                        imgUrl : imgUrl,
+                                     },
                             email: email,
                         });
                         user_details.save((err, obj) => {
@@ -58,21 +61,30 @@ module.exports = function( passport ) {
                 });
             }  else if( existingUser.google.id == null ){
 
-                existingUser.google = {  
-                                        id  : profile.id,
-                                        displayName : profile.displayName,
-                                        name : { firstName  : profile.name.givenName,
-                                                middleName : profile.name.middleName,
-                                                lastName   : profile.name.familyName,
-                                                },
-                                        imgUrl : imgUrl,
-                                      };
+                // Here already a sighnup user exist. so donot alter email, priv in loginData
+                // userloginid, email and name in the user details
+                // only update the google data
+
+                existingUser.google = { id  : profile.id };
 
                 existingUser.save( (err, obj) => {
                     if(err != null ) {
                         return done(null, false, {signup: 'fail'});
                     } else {
-                        return done(null, existingUser);
+                        userDetails.findOne( { email : email } )
+                        .then((detail) => {
+                            detail.google = {  
+                                                displayName : profile.displayName,
+                                                imgUrl : imgUrl,
+                                            };
+                            detail.save((err, obj) => {
+                                if(err) {
+                                    return done(null, false, {signup: 'fail'});
+                                } else {
+                                    return done(null, existingUser);
+                                }
+                            });
+                        })
                     }
                 });
                 

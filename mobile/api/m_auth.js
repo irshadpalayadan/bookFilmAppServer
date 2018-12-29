@@ -1,6 +1,5 @@
 const authRouter = require('express').Router();
 const passport = require('passport');
-const authCheck = require('../../service/passport/authCheck');
 const webUrl = require('../../config/key').bookFilmWeb.url;
 
 authRouter.get('/signin', passport.authenticate('local-signin', {failWithError : true}), 
@@ -25,8 +24,12 @@ authRouter.get('/signin', passport.authenticate('local-signin', {failWithError :
         res.status(401).json({ signup: 'fail'});
     }
 )
-.get('/signinstatus', authCheck, (req, res) => {
-    res.status(200).json({ status: 'success', redirectUrl: webUrl.concat('/dashboard')});
+.get('/signinstatus', (req, res) => {
+    if( req.isAuthenticated() ) {
+        res.status(200).json({ status: 'success', redirectUrl: webUrl.concat('/dashboard') });
+    } else {
+        res.status(200).json({ status: 'fail', redirectUrl: webUrl });
+    }
 })
 .get('/signout', (req, res) => {
     req.session.destroy(() => {

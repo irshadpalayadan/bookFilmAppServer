@@ -43,18 +43,18 @@ module.exports = function( passport ) {
         const phno = req.query.phno;
 
         // TODO :  need to add express validation
-        userLogin.findOne( { $or : [{'local.username' : user}, {'local.phno' : phno}] } )
+        userLogin.findOne( {'email' : email} )
         .then( ( existingUser ) => {
-            if( existingUser != null) {
-                return done(null, false, { signup: 'fail'});
-            } else {
+
+            if ( existingUser == null ) {
+                // Here no user with email create new one
+
                 var user_login = new userLogin({
                     local : {   username: user,
-                                phno: phno,
                                 pass: pass,
                             },
                     email: email,
-                    priv: 'basic'
+                    priv: 'basic',
                 });
 
                 user_login.save((err, obj) => {
@@ -62,6 +62,7 @@ module.exports = function( passport ) {
                     if(err != null ) {
                         return done(null, false, {signup: 'fail'});
                     } else {
+                        
                         var user_details = new userDetails({
                             userLoginId: obj.id,
                             name: user,
@@ -79,6 +80,39 @@ module.exports = function( passport ) {
                         });
                     }
                 });
+            } else if( existingUser.local.username == null) {
+
+                // Here user may signed in with google or fb
+                // privilege proprty should be carried. 
+
+                existingUser.local = {   
+                                        username: user,
+                                        pass: pass,
+                                     };
+
+                existingUser.save((err, obj) => {
+
+                    if(err != null ) {
+                        return done(null, false, {signup: 'fail'});
+                    } else {
+
+                        userDetails.findOne( { email : email } )
+                        .then((detail) => {
+                            detail.name = user;
+                            detail.phno =  phno;
+                            detail.save((err, obj) => {
+    
+                                if(err != null ) {
+                                    return done(null, false, {signup: 'fail' });
+                                } else {
+                                    return done(null, existingUser);
+                                }
+                            });
+                        });
+                    }
+                });
+            } else {
+                return done(null, false, {signup: 'fail' });
             }
         });
     }));
