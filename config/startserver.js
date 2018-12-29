@@ -1,7 +1,7 @@
 var PORT = process.env.PORT || 5000;
 var cors = require('cors');
 var api = require('../api/apimaster');
-var mobileApi = require('../mobile/api/apimaster');
+var mobileApi = require('../mobile/api/m_apimaster');
 
 module.exports = function( app ){
 
