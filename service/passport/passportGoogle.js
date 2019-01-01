@@ -26,9 +26,7 @@ module.exports = function( passport ) {
                 // so create a new one
 
                 var user_login = new userLogin({
-                    google : {  
-                                id  : profile.id
-                             },
+                    google : { id  : profile.id },
                     email: email,
                     priv: 'basic'
                 });
